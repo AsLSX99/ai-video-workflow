@@ -5,7 +5,7 @@ description: 用 Codex + Seedance 从一个想法做出完整 AI 视频的八步
 
 # AI 视频全流程（Codex 导演版）
 
-这套流程解决一个问题：用尽量少的钱、尽量低的抽卡率，从一个想法做出一条自己满意的 AI 视频。方法源自 Eian 的实战文章（x.com/EianLu/article/2118317430665613741），本 skill 把总导演从 Claude 换成 Codex——你只有 Codex，就让 Codex 一条龙干到底：写故事、写提示词、画图、写后期代码。
+这套流程解决一个问题：用尽量少的钱、尽量低的抽卡率，从一个想法做出一条自己满意的 AI 视频。方法源自 Eian 的实战文章（x.com/EianLu/article/2118317430665613741），本 skill 把总导演从 Claude 换成 Codex：写故事、写提示词、画图、写后期代码，一个入口全包，不依赖 Claude。
 
 ## 核心原则：把错误挡在花钱之前
 
