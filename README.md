@@ -1,10 +1,10 @@
 # ai-video-workflow
 
-> 用 **Codex + Seedance** 从一个想法做出完整 AI 视频的八步全流程 —— 一个可直接安装的 Finch Skill。
+> 用 **Codex + Seedance** 从一个想法做出完整 AI 视频的八步全流程 —— 开箱即用的 AI 视频制作工作流（SKILL）。
 
 方法论源自 Eian 的实战文章 [《Claude code/Codex+Seedance AI视频：从一个想法到成片的全流程》](https://x.com/EianLu/article/2118317430665613741)。本仓库在保留原文全部流程与提示词的基础上，把总导演从 Claude 换成 **Codex**：写故事、写分镜、写提示词、画设定图与首尾帧、写后期代码，一个入口全包，不依赖任何国内访问不到的服务。
 
-**这个 Skill 解决的问题**：从想法到成片中间的坑——模型配合、剧情构思、画面构图、机位摆放、镜头运动、提示词写法、视频抽卡。核心目标一句话：**用尽量少的钱、尽量低的抽卡率，做出一条自己满意的 AI 视频。**
+**这套工作流解决的问题**：从想法到成片中间的坑——模型配合、剧情构思、画面构图、机位摆放、镜头运动、提示词写法、视频抽卡。核心目标一句话：**用尽量少的钱、尽量低的抽卡率，做出一条自己满意的 AI 视频。**
 
 ---
 
@@ -12,11 +12,11 @@
 
 - [它做什么](#它做什么)
 - [核心原则](#核心原则)
-- [安装](#安装)
+- [仓库结构](#仓库结构)
+- [如何使用](#如何使用)
 - [环境准备](#环境准备)
 - [快速开始](#快速开始)
 - [八步流程](#八步流程)
-- [仓库结构](#仓库结构)
 - [提示词模板一览](#提示词模板一览)
 - [省钱与降抽卡率要点](#省钱与降抽卡率要点)
 - [安全须知](#安全须知)
@@ -27,7 +27,7 @@
 
 ## 它做什么
 
-触发后，Skill 引导你按固定顺序走完一支片子的完整生命周期，每一关都有独立审核，上一关"通过"才进下一关：
+按固定顺序走完一支片子的完整生命周期，每一关都有独立审核，上一关"通过"才进下一关：
 
 ```
 想法 ──► 完整剧情 ──► 分镜表 ──► 画风+设定图 ──► 每镜首尾帧
@@ -36,11 +36,13 @@
               ▼           ▼            ▼              ▼
         七段式视频提示词 ──► 提交前审核② ──► Seedance 生成
                                                   │
-        全片复核④ ◄── ffmpeg 后期 ◄───────────────┘
+        全片复核③ ◄── ffmpeg 后期 ◄───────────────┘
               │
               ▼
         经验沉淀存档（画风/提示词/错误清单，下一部片直接复用）
 ```
+
+产物是一支完整成片，外加一套可复用的项目档案：画风定义、角色设定图、每镜首尾帧、全部提示词、错误记录。
 
 ## 核心原则
 
@@ -56,24 +58,51 @@
 
 另一个低抽卡率的秘密是**独立审核会话**：主会话和你聊了很久，知道你想说什么，看材料会自动脑补；新开的审核会话什么都不知，只拿当前关卡的材料、不拿任何结论——哪里看不懂，就说明哪里真的没讲清楚。原文作者用这套方法抓出过"两张图杯子大小差 13%、帽檐一张有一张没有、左右写反"这类问题。
 
-## 安装
+## 仓库结构
 
-Skill 发现机制遵循 Finch 的标准目录约定，放在任意一个支持的位置即可：
-
-| 作用域 | 路径 | 说明 |
-|---|---|---|
-| 项目 / Space | `<项目>/.finch/skills/ai-video-workflow/` | 只在该项目中可用（默认推荐） |
-| 用户全局 | `~/.finch/skills/ai-video-workflow/` | 你在本机的所有会话可用 |
-| 机器全局 | `~/.finch/skills/`（全局目录） | 这台机器上所有会话可用 |
-
-手动安装就是把本仓库放进上述任一位置：
-
-```bash
-# 示例：装到某个项目的 .finch/skills/ 下
-git clone https://github.com/AsLSX99/ai-video-workflow.git <项目>/.finch/skills/ai-video-workflow
+```
+ai-video-workflow/
+├── SKILL.md                    # 主文档：核心原则、分工、八步流程、铁律
+├── README.md
+├── LICENSE
+├── templates/                  # 10 个提示词模板，填 [方括号] 即发
+│   ├── 00-director.md          # 总导演协作模式（开工必发）
+│   ├── 01-story.md             # 想法 → 完整剧情
+│   ├── 02-story-review.md      # 故事审核（独立会话）
+│   ├── 03-storyboard.md        # 分镜表 + 构图配色
+│   ├── 04-frame-check.md       # 首尾帧 8 项检查
+│   ├── 05-video-prompt.md      # 七段式视频提示词
+│   ├── 06-pre-submit-review.md # 提交前审核（花钱前最后一关）
+│   ├── 07-postprocess.md       # 后期合成
+│   ├── 08-final-review.md      # 全片复核（交付前最后一关）
+│   └── 09-four-threads.md      # 四线程工作模式（进阶可选）
+├── references/
+│   ├── pitfall-table.md        # 模型 20 条易错点对照表
+│   └── roles.md                # 分工表与四线程角色
+└── scripts/
+    ├── env_check.py            # 环境自检：codex / ffmpeg / Python / ARK_API_KEY
+    └── seedance.py             # Seedance 提交 / 轮询 / 下载（纯标准库，无第三方依赖）
 ```
 
-同名 Skill 存在多份时，优先级：当前 Space / 已授权目录 > 当前项目 > 用户全局 > 机器全局。`SKILL.md` 必须直接位于 `ai-video-workflow/` 文件夹内。
+各部分职责：
+
+- **`SKILL.md`**——整个工作流的主入口。任何支持"技能/指令包"机制的 AI Agent 都可以加载它；即使不支持，把它全文发给 Codex 作为开场指令同样成立，流程完整生效。
+- **`templates/`**——10 段可直接复制的提示词，每段头部注明"什么时候发、发之前准备什么"。填掉 `[方括号]` 即用。
+- **`references/`**——写提示词时对照的两张表：20 条模型易错点、四线程角色分工。
+- **`scripts/`**——两个独立可运行的 Python 脚本，任何环境直接 `python` 执行。
+
+## 如何使用
+
+三种用法，按你的工具链任选：
+
+**① 作为 Agent 技能安装**
+把本仓库整个目录克隆/复制到你的 AI Agent 识别技能的目录下，目录名保持 `ai-video-workflow`，确保 `SKILL.md` 直接位于该目录内。你的 Agent 支持多层技能加载的话，`templates/` 和 `references/` 会按需读取，不占上下文。
+
+**② 直接当开场指令**
+不装任何东西也行：新建项目文件夹，把 `SKILL.md` 全文发给 Codex，再说一句"按这个流程做片子"。它会先问你片长、画幅、总预算、要不要配乐字幕，再自检环境，然后按八步走。
+
+**③ 只取单个模板**
+流程里的某一环单独用也行——比如只拿 `05-video-prompt.md` 写一段视频提示词，或只拿 `pitfall-table.md` 对查已有提示词。
 
 ## 环境准备
 
@@ -81,7 +110,7 @@ git clone https://github.com/AsLSX99/ai-video-workflow.git <项目>/.finch/skill
 |---|---|---|
 | **Codex** | 总导演 + 画师（写故事/提示词/画图/写后期代码） | `npm install -g @openai/codex`，然后 `codex login` |
 | **ffmpeg** | 第 7 步拼接、转场、调色、放大 | `winget install Gyan.FFmpeg`（Windows）或 `brew install ffmpeg`（macOS） |
-| **Python ≥ 3.9** | 运行自检与 Seedance 调用脚本 | python.org |
+| **Python ≥ 3.9** | 运行自检与 Seedance 调用脚本 | [python.org](https://www.python.org/downloads/) |
 | **ARK_API_KEY** | Seedance 视频生成 | 火山引擎 → 火山方舟 → API Key |
 
 安装后跑一次自检：
@@ -92,7 +121,7 @@ python scripts/env_check.py
 
 全绿输出 `PASS，可以开工`；缺项会逐条给出补齐命令。
 
-`ARK_API_KEY` 写入环境变量（**不要写进任何会提交的文件**）：
+`ARK_API_KEY` 写入环境变量（**不要写进任何会提交到 git 的文件**）：
 
 ```bash
 # Windows（写入用户环境变量，重开终端生效）
@@ -104,11 +133,11 @@ echo 'export ARK_API_KEY="你的key"' >> ~/.zshrc && source ~/.zshrc
 
 ## 快速开始
 
-1. 建一个项目文件夹，把本 Skill 装进去（见[安装](#安装)）
+1. `git clone https://github.com/AsLSX99/ai-video-workflow.git`，放到你的 Agent 读取技能的目录，或任何你顺手的位置
 2. 跑 `python scripts/env_check.py`，补齐缺项
-3. 在 Finch 里说 **"做 AI 视频"** / **"Seedance 流程"** / **"想做个视频但不知道从哪开始"**，Skill 触发
-4. 把 `templates/00-director.md` 全文发给 Codex 开启项目——它会先问你片长、画幅、总预算、要不要配乐字幕，再自检环境
-5. 之后全程只和它沟通，按八步走到成片
+3. 把 `templates/00-director.md` 全文发给 Codex 开启项目
+4. 回答它的开工四问（片长、画幅、总预算、配乐字幕），之后全程只和它沟通
+5. 按八步走到成片，每关拿"通过"再进下一关
 
 ## 八步流程
 
@@ -163,31 +192,6 @@ echo 'export ARK_API_KEY="你的key"' >> ~/.zshrc && source ~/.zshrc
 ### 第 8 步：全片复核和交付
 新开审核会话，只给成片不给任何结论，让它像第一次看片的观众从头看一遍（`templates/08-final-review.md`）。最后让 Codex 写总结存档：画风、提示词、犯过的错误，沉淀进项目文件夹，下一部片直接复用。
 
-## 仓库结构
-
-```
-ai-video-workflow/
-├── SKILL.md                    # 主文档：核心原则、分工、八步流程、铁律
-├── README.md
-├── templates/                  # 10 个提示词模板，填 [方括号] 即发
-│   ├── 00-director.md          # 总导演协作模式（开工必发）
-│   ├── 01-story.md             # 想法 → 完整剧情
-│   ├── 02-story-review.md      # 故事审核（独立会话）
-│   ├── 03-storyboard.md        # 分镜表 + 构图配色
-│   ├── 04-frame-check.md       # 首尾帧 8 项检查
-│   ├── 05-video-prompt.md      # 七段式视频提示词
-│   ├── 06-pre-submit-review.md # 提交前审核（花钱前最后一关）
-│   ├── 07-postprocess.md       # 后期合成
-│   ├── 08-final-review.md      # 全片复核（交付前最后一关）
-│   └── 09-four-threads.md      # 四线程工作模式（进阶可选）
-├── references/
-│   ├── pitfall-table.md        # 模型 20 条易错点对照表
-│   └── roles.md                # 分工表与四线程角色
-└── scripts/
-    ├── env_check.py            # 环境自检：codex / ffmpeg / Python / ARK_API_KEY
-    └── seedance.py             # Seedance 提交 / 轮询 / 下载（纯标准库，无第三方依赖）
-```
-
 ## 提示词模板一览
 
 | 模板 | 发送时机 | 关卡 |
@@ -223,8 +227,12 @@ ai-video-workflow/
 
 - **本仓库不含任何 API Key / Token**，欢迎审计
 - `ARK_API_KEY` 只从环境变量读取，`scripts/seedance.py` 不打印 key
-- 密钥写入本机环境变量，**永远不要**写进会提交到 git 的文件；`.gitignore` 已排除 `__pycache__/`
-- 若在公开仓库中新增文件，提交前建议自查：`git grep -InE "(sk-[A-Za-z0-9]{16,}|gh[pousr]_[A-Za-z0-9]{20,}|AKLT[A-Za-z0-9]{10,})"`
+- 密钥写进环境变量，**永远不要**写进会提交到 git 的文件；`.gitignore` 已排除 `__pycache__/`
+- 往公开仓库新增文件前建议自查一遍：
+
+```bash
+git grep -InE "(sk-[A-Za-z0-9]{16,}|gh[pousr]_[A-Za-z0-9]{20,}|AKLT[A-Za-z0-9]{10,})" || echo "干净"
+```
 
 ## 常见问题
 
@@ -251,6 +259,9 @@ python scripts/seedance.py --task <task_id>
 **Q：四线程模式什么时候用？**
 日常小片用单审核会话（02 / 06 / 08 三个关卡）够了；大预算或长片再上 `09-four-threads.md`，多一个监督管要求清单、一个代理管预算审批。
 
+**Q：只有一段提示词模板对我有用，整个 Skill 太重？**
+直接单用那个文件即可，模板之间没有隐藏依赖；`scripts/` 两个脚本也彼此独立。
+
 ## 致谢
 
 - 方法论与全部提示词原文：[Eian (@EianLu)](https://x.com/EianLu/article/2118317430665613741)《Claude code/Codex+Seedance AI视频：从一个想法到成片的全流程》
@@ -259,4 +270,4 @@ python scripts/seedance.py --task <task_id>
 
 ## License
 
-MIT
+[MIT](./LICENSE)
